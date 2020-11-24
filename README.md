@@ -21,7 +21,7 @@ However, if you want the entirety of this module, you can just import the pycalc
  ```python
  import pycalc
   
- print(Vector3.zero())
+ print(pycalc.Vector3.zero())
  # output should be Vector3 (0, 0, 0)
  ```
 
