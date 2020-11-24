@@ -30,7 +30,7 @@ class Matrix:
         columns = len(grid[0])
         for i in range(len(grid)):
             if len(grid[i]) != columns:
-                raise TypeError
+                raise TypeError("Not a valid Matrix with defined size of n x m")
         self.size = [len(grid), len(grid[0])]
 
     def is_square(self):
@@ -54,9 +54,9 @@ class Matrix:
     def __add__(self, other):
         """ Add two matrices """
         if type(other) != Matrix:
-            raise TypeError
+            raise TypeError("Cannot operate with a non Matrix")
         if self.size[0] != other.size[0] or self.size[1] != other.size[1]:
-            raise ValueError
+            raise ValueError("Cannot do operation with the given sizes for the matrices")
         new_value = []
         for i in range(len(self.grid)):
             row = []
@@ -68,9 +68,9 @@ class Matrix:
     def __sub__(self, other):
         """ Subtraction of matrices """
         if type(other) != Matrix:
-            raise TypeError
+            raise TypeError("Cannot operate with a non Matrix")
         if self.size[0] != other.size[0] or self.size[1] != other.size[1]:
-            raise ValueError
+            raise ValueError("Cannot do operation with the given sizes for the matrices")
         new_value = []
         for i in range(len(self.grid)):
             row = []
@@ -99,7 +99,7 @@ class Matrix:
     def tranpose(self):
         """ Transpose of self """
         if not self.is_square():
-            raise ValueError
+            raise ValueError("Cannot do operation with the given sizes for the matrices")
         new_grid = self.grid[:]
         for i in range(len(self.grid)):
             for j in range(len(self.grid[i])):
@@ -117,9 +117,9 @@ class Matrix:
     def times(self, other):
         """ Multiply by matrix"""
         if type(other) != Matrix:
-            raise TypeError
+            raise TypeError("Cannot operate with a non Matrix")
         if other.size[0] != self.size[1]:
-            raise ValueError
+            raise ValueError("Cannot do operation with the given sizes for the matrices")
         new_grid = []
         for i in range(0, self.size[0]):
             row = []
@@ -156,7 +156,7 @@ class Matrix:
     def __pow__(self, power: int):
         """ Get power of matrix """
         if not self.is_square():
-            raise ValueError
+            raise ValueError("Cannot do operation with the given sizes for the matrices")
         new_value = Matrix(self.grid)
         for _ in range(1, power):
             new_value = (new_value * self)
@@ -165,7 +165,7 @@ class Matrix:
     def inversed(self):
         """ Inversed of self """
         if not self.is_square():
-            raise ValueError
+            raise ValueError("Cannot do operation with the given sizes for the matrices")
         ide = Matrix.identity(self.size[0])
 
         new_grid = self.grid[:]

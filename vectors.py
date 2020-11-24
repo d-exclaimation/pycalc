@@ -12,8 +12,8 @@ def main():
 
 def parallelogram(lhs, rhs):
     """ Find area of parallelogram """
-    if type(lhs) != type(rhs):
-        return None
+    if type(lhs) != type(rhs) and type(lhs) not in [Vector2, Vector3, VectorAny]:
+        raise TypeError("Cannot do dot product with a non Vector")
     return (lhs * rhs).magnitude()
 
 
@@ -41,16 +41,16 @@ class Vector2:
         """ Add self """
         new = Vector2(self.get_x(), self.get_y())
         if type(other) != Vector2:
-            return new
+            raise TypeError("Cannot do add product with a non Vector2")
         for i in range(len(new.array)):
             new.array[i] = new.array[i] + other.array[i]
         return new
 
     def __sub__(self, other):
-        """ Add self """
+        """ Subtract self """
         new = Vector2(self.get_x(), self.get_y())
         if type(other) != Vector2:
-            return new
+            raise TypeError("Cannot do min product with a non Vector2")
         for i in range(len(new.array)):
             new.array[i] = new.array[i] - other.array[i]
         return new
@@ -58,7 +58,7 @@ class Vector2:
     def dot(self, other):
         """ Dot product """
         if type(other) != Vector2:
-            return -1
+            raise TypeError("Cannot do dot product with a non Vector2")
         res = 0.0
         for i in range(len(self.array)):
             res += self.array[i] * other.array[i]
@@ -77,8 +77,6 @@ class Vector2:
 
     def is_orthogonal(self, other) -> bool:
         """ Check if two vector is orthogonal to each other """
-        if self.dot(other) == -1:
-            return False
         return self.dot(other) == 0
 
     @staticmethod
@@ -119,7 +117,7 @@ class Vector3:
         """ Add two vector3 """
         new = Vector3(self.get_x(), self.get_y(), self.get_z())
         if type(other) != Vector3:
-            return new
+            raise TypeError("Cannot do add product with a non Vector3")
         for i in range(len(new.axises)):
             new.axises[i] = new.axises[i] + other.axises[i]
         return new
@@ -128,7 +126,7 @@ class Vector3:
         """ Subtract two vector3 """
         new = Vector3(self.get_x(), self.get_y(), self.get_z())
         if type(other) != Vector3:
-            return new
+            raise TypeError("Cannot do min product with a non Vector3")
         for i in range(len(new.axises)):
             new.axises[i] = new.axises[i] - other.axises[i]
         return new
@@ -136,7 +134,7 @@ class Vector3:
     def __mul__(self, other):
         """ Cross product """
         if type(other) != Vector3:
-            return Vector3.zero()
+            raise TypeError("Cannot do cross product with a non Vector3")
         new_value = Vector3.zero()
         for i in range(len(self.axises)):
             lhs = [self.axises[j] for j in range(len(self.axises)) if j != i]
@@ -148,7 +146,7 @@ class Vector3:
     def dot(self, other):
         """ Dot product of vector3 """
         if type(other) != Vector3:
-            return -1
+            raise TypeError("Cannot do dot product with a non Vector3")
         res = 0.0
         for i in range(len(self.axises)):
             res += self.axises[i] * other.axises[i]
@@ -163,8 +161,6 @@ class Vector3:
 
     def is_orthogonal(self, other) -> bool:
         """ Check if two vector is orthogonal to each other """
-        if self.dot(other) == -1:
-            return False
         return self.dot(other) == 0
 
 
@@ -189,8 +185,8 @@ class VectorAny:
         """ Add two VectorAny """
         new = VectorAny(1)
         new.axises = self.axises
-        if type(other) != Vector3:
-            return new
+        if type(other) != VectorAny and len(other.axises) != len(self.axises):
+            raise TypeError("Cannot add VectorAny to a non VectorAny or VectorAny with different size")
         for i in range(len(new.axises)):
             new.axises[i] = new.axises[i] + other.axises[i]
         return new
@@ -199,8 +195,8 @@ class VectorAny:
         """ Substract two VectorAny """
         new = VectorAny(1)
         new.axises = self.axises
-        if type(other) != Vector3:
-            return new
+        if type(other) != VectorAny and len(other.axises) != len(self.axises):
+            raise TypeError("Cannot add VectorAny to a non VectorAny or VectorAny with different size")
         for i in range(len(new.axises)):
             new.axises[i] = new.axises[i] - other.axises[i]
         return new
@@ -208,7 +204,7 @@ class VectorAny:
     def dot(self, other):
         """ Dot product of VectorAny """
         if type(other) != VectorAny:
-            return -1
+            raise TypeError("Cannot add VectorAny to a non VectorAny or VectorAny with different size")
         res = 0.0
         for i in range(len(self.axises)):
             res += self.axises[i] * other.axises[i]
@@ -223,8 +219,6 @@ class VectorAny:
 
     def is_orthogonal(self, other) -> bool:
         """ Check if two vector is orthogonal to each other """
-        if self.dot(other) == -1:
-            return False
         return self.dot(other) == 0
 
 
