@@ -1,8 +1,8 @@
 """
 pycalc module
 authored by Vincent
-version 1.0.0
-last modified Nov 15, 2020 at 3:19 PM (UTC + 7)
+version 1.0.2
+last modified Nov 24, 2020 at 7:20 PM (UTC + 7)
 Copyright © 2020 Vincent. All rights reserved.
 """
 from probabilities import *

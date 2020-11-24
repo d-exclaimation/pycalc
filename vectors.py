@@ -138,7 +138,7 @@ class Vector3:
         new_value = Vector3.zero()
         for i in range(len(self.axises)):
             lhs = [self.axises[j] for j in range(len(self.axises)) if j != i]
-            rhs = [self.axises[k] for k in range(len(self.axises)) if k != i]
+            rhs = [other.axises[k] for k in range(len(other.axises)) if k != i]
             deter = (lhs[0] * rhs[1]) - (lhs[1] * rhs[0])
             new_value.axises[i] = deter
         return new_value

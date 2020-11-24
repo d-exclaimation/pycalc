@@ -96,14 +96,11 @@ class Matrix:
                     return False
         return True
 
-    def tranpose(self):
+    def transpose(self):
         """ Transpose of self """
         if not self.is_square():
             raise ValueError("Cannot do operation with the given sizes for the matrices")
-        new_grid = self.grid[:]
-        for i in range(len(self.grid)):
-            for j in range(len(self.grid[i])):
-                new_grid[j][i] = self.grid[i][j]
+        new_grid = [[self.grid[j][i] for j in range(len(self.grid[i]))] for i in range(len(self.grid))]
         return Matrix(new_grid)
 
     def multiply(self, other: int):
