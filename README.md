@@ -18,7 +18,7 @@ However, if you want the entirety of this module, you can just import the pycalc
 
 
  e.g: 
- ```
+ ```python
  import pycalc
   
  print(Vector3.zero())
