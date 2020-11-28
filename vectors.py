@@ -1,6 +1,10 @@
 """
 vectors.py
 Math for Vectors
+authored by Vincent
+version 1.0.2
+last modified Nov 28, 2020 at 3:59 PM (UTC + 7)
+Copyright © 2020 Vincent. All rights reserved.
 """
 import math
 
@@ -12,7 +16,7 @@ def main():
 
 def parallelogram(lhs, rhs):
     """ Find area of parallelogram """
-    if type(lhs) != type(rhs) and type(lhs) not in [Vector2, Vector3, VectorAny]:
+    if isinstance(lhs, type(rhs)) and type(lhs) not in [Vector2, Vector3, VectorAny]:
         raise TypeError("Cannot do dot product with a non Vector")
     return (lhs * rhs).magnitude()
 
@@ -40,7 +44,7 @@ class Vector2:
     def __add__(self, other):
         """ Add self """
         new = Vector2(self.get_x(), self.get_y())
-        if type(other) != Vector2:
+        if not isinstance(other, Vector2):
             raise TypeError("Cannot do add product with a non Vector2")
         for i in range(len(new.array)):
             new.array[i] = new.array[i] + other.array[i]
@@ -49,7 +53,7 @@ class Vector2:
     def __sub__(self, other):
         """ Subtract self """
         new = Vector2(self.get_x(), self.get_y())
-        if type(other) != Vector2:
+        if not isinstance(other, Vector2):
             raise TypeError("Cannot do min product with a non Vector2")
         for i in range(len(new.array)):
             new.array[i] = new.array[i] - other.array[i]
@@ -57,7 +61,7 @@ class Vector2:
 
     def dot(self, other):
         """ Dot product """
-        if type(other) != Vector2:
+        if not isinstance(other, Vector2):
             raise TypeError("Cannot do dot product with a non Vector2")
         res = 0.0
         for i in range(len(self.array)):
@@ -116,8 +120,10 @@ class Vector3:
     def __add__(self, other):
         """ Add two vector3 """
         new = Vector3(self.get_x(), self.get_y(), self.get_z())
-        if type(other) != Vector3:
+        if not isinstance(other, Vector3):
             raise TypeError("Cannot do add product with a non Vector3")
+            
+        # Add all element of the vectors of self and the other
         for i in range(len(new.axises)):
             new.axises[i] = new.axises[i] + other.axises[i]
         return new
@@ -125,28 +131,40 @@ class Vector3:
     def __sub__(self, other):
         """ Subtract two vector3 """
         new = Vector3(self.get_x(), self.get_y(), self.get_z())
-        if type(other) != Vector3:
+        if not isinstance(other, Vector3):
             raise TypeError("Cannot do min product with a non Vector3")
+            
+        # Subtract all element of the vectors of self and the other
         for i in range(len(new.axises)):
             new.axises[i] = new.axises[i] - other.axises[i]
         return new
 
     def __mul__(self, other):
         """ Cross product """
-        if type(other) != Vector3:
+        if not isinstance(other, Vector3):
             raise TypeError("Cannot do cross product with a non Vector3")
+
+        # Get a new Vector 3 as result
         new_value = Vector3.zero()
+
+        # Loop through for each axises
         for i in range(len(self.axises)):
+
+            # Get all the axises beside the currently checked on
             lhs = [self.axises[j] for j in range(len(self.axises)) if j != i]
             rhs = [other.axises[k] for k in range(len(other.axises)) if k != i]
+
+            # Find the determinant and put in the result for the current index
             deter = (lhs[0] * rhs[1]) - (lhs[1] * rhs[0])
             new_value.axises[i] = deter
         return new_value
 
     def dot(self, other):
         """ Dot product of vector3 """
-        if type(other) != Vector3:
+        if not isinstance(other, Vector3):
             raise TypeError("Cannot do dot product with a non Vector3")
+
+        # Add all the multi of each axises from both
         res = 0.0
         for i in range(len(self.axises)):
             res += self.axises[i] * other.axises[i]
@@ -185,8 +203,10 @@ class VectorAny:
         """ Add two VectorAny """
         new = VectorAny(1)
         new.axises = self.axises
-        if type(other) != VectorAny and len(other.axises) != len(self.axises):
-            raise TypeError("Cannot add VectorAny to a non VectorAny or VectorAny with different size")
+        if not isinstance(other, VectorAny) or len(other.axises) != len(self.axises):
+            raise TypeError("Cannot add to a non VectorAny or VectorAny with different size")
+
+        # Add all axises
         for i in range(len(new.axises)):
             new.axises[i] = new.axises[i] + other.axises[i]
         return new
@@ -195,16 +215,20 @@ class VectorAny:
         """ Substract two VectorAny """
         new = VectorAny(1)
         new.axises = self.axises
-        if type(other) != VectorAny and len(other.axises) != len(self.axises):
-            raise TypeError("Cannot add VectorAny to a non VectorAny or VectorAny with different size")
+        if not isinstance(other, VectorAny) or len(other.axises) != len(self.axises):
+            raise TypeError("Cannot add to a non VectorAny or VectorAny with different size")
+
+        # Subtract all axises
         for i in range(len(new.axises)):
             new.axises[i] = new.axises[i] - other.axises[i]
         return new
 
     def dot(self, other):
         """ Dot product of VectorAny """
-        if type(other) != VectorAny:
-            raise TypeError("Cannot add VectorAny to a non VectorAny or VectorAny with different size")
+        if not isinstance(other, VectorAny) or len(other.axises) != len(self.axises):
+            raise TypeError("Cannot add to a non VectorAny or VectorAny with different size")
+
+        # Add all multiplication of each axises from both
         res = 0.0
         for i in range(len(self.axises)):
             res += self.axises[i] * other.axises[i]

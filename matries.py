@@ -1,6 +1,10 @@
 """
 matrices.py
 authored Vincent
+authored by Vincent
+version 1.0.2
+last modified Nov 28, 2020 at 3:59 PM (UTC + 7)
+Copyright © 2020 Vincent. All rights reserved.
 """
 
 
@@ -28,8 +32,10 @@ class Matrix:
         """ Constructor """
         self.grid = grid
         columns = len(grid[0])
-        for i in range(len(grid)):
-            if len(grid[i]) != columns:
+
+        # Validate column size
+        for row in grid:
+            if len(row) != columns:
                 raise TypeError("Not a valid Matrix with defined size of n x m")
         self.size = [len(grid), len(grid[0])]
 
@@ -38,12 +44,14 @@ class Matrix:
         return self.size[0] == self.size[1]
 
     @staticmethod
-    def identity(n: int) -> list:
+    def identity(num: int) -> list:
         """ Get identity matrix """
+
+        # Create a zero matrix grid, but diagonal are 1s
         res = []
-        for i in range(n):
+        for i in range(num):
             row = []
-            for j in range(n):
+            for j in range(num):
                 if i == j:
                     row.append(1)
                 else:
@@ -53,10 +61,14 @@ class Matrix:
 
     def __add__(self, other):
         """ Add two matrices """
-        if type(other) != Matrix:
+
+        # Validate type and value given: same size and same type
+        if not isinstance(other, Matrix):
             raise TypeError("Cannot operate with a non Matrix")
         if self.size[0] != other.size[0] or self.size[1] != other.size[1]:
             raise ValueError("Cannot do operation with the given sizes for the matrices")
+            
+        # Create a new value by adding all items in the grid
         new_value = []
         for i in range(len(self.grid)):
             row = []
@@ -67,10 +79,14 @@ class Matrix:
 
     def __sub__(self, other):
         """ Subtraction of matrices """
-        if type(other) != Matrix:
+
+        # Validate type and value given: same size and same type
+        if not isinstance(other, Matrix):
             raise TypeError("Cannot operate with a non Matrix")
         if self.size[0] != other.size[0] or self.size[1] != other.size[1]:
             raise ValueError("Cannot do operation with the given sizes for the matrices")
+
+        # Create a new value by subtracting all items in the grid
         new_value = []
         for i in range(len(self.grid)):
             row = []
@@ -80,7 +96,7 @@ class Matrix:
         return Matrix(new_value)
 
     def __str__(self):
-        """ String representative """
+        """ String representative, in 2D """
         new_value = ""
         for i in range(len(self.grid)):
             new_value += str(self.grid[i]) + "\n"
@@ -88,8 +104,13 @@ class Matrix:
 
     def __eq__(self, other):
         """ Comparison with other """
-        if type(other) != Matrix or self.size[0] != other.size[0] or self.size[1] != other.size[1]:
+
+        # Check for type and size
+        same_size = self.size[0] != other.size[0] or self.size[1] != other.size[1]
+        if not isinstance(other, Matrix) or same_size:
             return False
+        
+        # Check for each item in grids
         for i in range(len(self.grid)):
             for j in range(len(self.grid[i])):
                 if self.grid[i][j] != other.grid[i][j]:
@@ -100,30 +121,47 @@ class Matrix:
         """ Transpose of self """
         if not self.is_square():
             raise ValueError("Cannot do operation with the given sizes for the matrices")
-        new_grid = [[self.grid[j][i] for j in range(len(self.grid[i]))] for i in range(len(self.grid))]
+
+        # The new grid will just the original but the element has its indexes switch
+        new_grid = [
+            [self.grid[j][i] for j in range(len(self.grid[i]))] for i in range(len(self.grid))
+        ]
         return Matrix(new_grid)
 
     def multiply(self, other: int):
         """ Multiply by Int """
         new_grid = self.grid[:]
-        for i in range(len(new_grid)):
-            for j in range(len(new_grid[i])):
+
+        # For each item in the grid, multiply it by the parameter
+        for i, row in enumerate(new_grid):
+            for j in range(len(row)):
                 new_grid[i][j] *= other
         return Matrix(new_grid)
 
     def times(self, other):
         """ Multiply by matrix"""
-        if type(other) != Matrix:
+
+        # Validate type and value given: valid size and same type
+        if not isinstance(other, Matrix):
             raise TypeError("Cannot operate with a non Matrix")
         if other.size[0] != self.size[1]:
             raise ValueError("Cannot do operation with the given sizes for the matrices")
+
+        # Create an empty grid to fill in
         new_grid = []
+
+        # Loop through each row in self, and loop through for each column in other
         for i in range(0, self.size[0]):
             row = []
             for j in range(0, other.size[1]):
+
+                # create a array of column j from other
                 column = []
-                for x in range(len(self.grid[i])):
-                    column.append(other.grid[x][j])
+                for k in range(len(self.grid[i])):
+                    column.append(other.grid[k][j])
+                
+                # For row i and column j should be the dot product
+                # of row i of self and column j of other
                 row.append(Matrix.dot(self.grid[i], column))
             new_grid.append(row)
         return Matrix(new_grid)
@@ -133,16 +171,20 @@ class Matrix:
         """ Dot product of two list """
         if len(lhs) != len(rhs):
             raise ValueError
+
+        # Simple Array dot product
         res = 0.0
-        for i in range(len(lhs)):
-            res += lhs[i] * rhs[i]
+        for i, left in enumerate(lhs):
+            res += left * rhs[i]
         return res
 
     def __mul__(self, other):
         """ Multiply by others """
-        if type(other) == int:
+
+        # Call in the appropriate function for each types, give it's valid
+        if isinstance(other, int):
             return self.multiply(other)
-        if type(other) == Matrix:
+        if isinstance(other, Matrix):
             return self.times(other)
         raise TypeError
 
@@ -154,6 +196,8 @@ class Matrix:
         """ Get power of matrix """
         if not self.is_square():
             raise ValueError("Cannot do operation with the given sizes for the matrices")
+
+        # Multiply it self for each power - 1
         new_value = Matrix(self.grid)
         for _ in range(1, power):
             new_value = (new_value * self)
@@ -161,29 +205,39 @@ class Matrix:
 
     def inversed(self):
         """ Inversed of self """
+
+        # Validate size
         if not self.is_square():
             raise ValueError("Cannot do operation with the given sizes for the matrices")
         ide = Matrix.identity(self.size[0])
 
+        # Try to create an echelon steps, and 
         new_grid = self.grid[:]
-        for i in range(len(new_grid)):
+        for i, current in enumerate(new_grid):
             for j in range(i + 1, len(new_grid)):
-                coef = new_grid[j][i] / new_grid[i][i]
+                coef = new_grid[j][i] / current[i]
 
-                new_grid[j] = minus(new_grid[j], times(coef, new_grid[i]))
+                # Apply the row operation to both the grid and the identity
+                new_grid[j] = minus(new_grid[j], times(coef, current))
                 ide[j] = minus(ide[j], times(coef, ide[i]))
 
-        for x in range(len(new_grid)):
-            rev = len(new_grid) - 1 - x
-            for y in range(0, rev):
-                coef = new_grid[y][rev] / new_grid[rev][rev]
-                new_grid[y] = minus(new_grid[y], times(coef, new_grid[rev]))
-                ide[y] = minus(ide[y], times(coef, ide[rev]))
+        # Now try to eliminate all beside the pivots
+        for i in range(len(new_grid)):
+            rev = len(new_grid) - 1 - i
+            for j in range(0, rev):
+                coef = new_grid[j][rev] / new_grid[rev][rev]
 
-        for p in range(len(new_grid)):
-            if new_grid[p][p] < 0:
-                new_grid[p] = times(-1, new_grid[p])
-                ide[p] = times(-1, ide[p])
+                # Apply the row operation to both the grid and the identity
+                new_grid[j] = minus(new_grid[j], times(coef, new_grid[rev]))
+                ide[j] = minus(ide[j], times(coef, ide[rev]))
+
+        # Try to eliminate all negatives
+        for k, current in enumerate(new_grid):
+            if current[k] < 0:
+                new_grid[k] = times(-1, current)
+                ide[k] = times(-1, ide[k])
+        
+        # Return the transformed identity
         return Matrix(ide)
 
 

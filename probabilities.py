@@ -1,6 +1,10 @@
 """
 probabilities.py
 Math for Probability
+authored by Vincent
+version 1.0.2
+last modified Nov 28, 2020 at 3:59 PM (UTC + 7)
+Copyright © 2020 Vincent. All rights reserved.
 """
 
 
@@ -10,13 +14,13 @@ def main():
     print(number)
 
 
-def common_factor(a: int, b: int) -> int:
+def common_factor(num_a: int, num_b: int) -> int:
     """ Get common factor of two ints"""
-    if abs(a) > abs(b):
-        res = abs(b)
+    if abs(num_a) > abs(num_b):
+        res = abs(num_b)
     else:
-        res = abs(a)
-    while a % res != 0 or b % res != 0:
+        res = abs(num_a)
+    while num_a % res != 0 or num_b % res != 0:
         res -= 1
     return res
 
@@ -26,13 +30,24 @@ class Fraction:
 
     def __init__(self, value, denominator: int = 1):
         """ Create self """
-        if type(value) == float:
+
+        # for given first value is a float, no given denominator
+        if isinstance(value, float) and denominator == 1:
+
+            # Convert that float in a numerator and denominator using
             num = round(100 * value - 10 * value)
+            # 100 n - 10 n = 90n that meant denominator is 90
             denom = 90
+
+            # Make sure both is factored by their common factor
             fac = common_factor(num, denom)
             self.num = num // fac
             self.denom = denom // fac
-        elif type(value) == int:
+        
+        # For two int parameter
+        elif isinstance(value, int):
+
+            # Just get the common factor and simply both
             fac = common_factor(value, denominator)
             self.num = value // fac
             self.denom = denominator // fac
@@ -41,22 +56,30 @@ class Fraction:
 
     def __add__(self, other):
         """ Addition of fraction """
-        if type(other) == int:
+
+        # Determine what type is given
+        if isinstance(other, int):
             return self.add_with_int(other)
-        if type(other) == float:
+        if isinstance(other, float):
             return self.add_with_float(other)
-        if type(other) == Fraction:
+        if isinstance(other, Fraction):
             return self.add_with_fraction(other)
         raise TypeError("Cannot operate with that type")
 
     def add_with_fraction(self, other):
         """ Addition with fraction """
-        if type(other) != Fraction:
+        if not isinstance(other, Fraction):
             raise TypeError("Cannot operate with a non fraction")
+
+        # get common factor of both denominator, create a new one using that
         comfac = common_factor(self.denom, other.denom)
         new_denom = comfac * (self.denom / comfac) * (other.denom / comfac)
+
+        # Create a new result fraction object, then change the denominator
         copy = Fraction(1, 2)
         copy.denom = new_denom
+
+        # Change the numerator to the it times what denom is multiplied by
         copy.num = self.num * (other.denom / comfac) + other.num * (self.denom / comfac)
         return Fraction(copy.num, copy.denom)
 
@@ -67,28 +90,40 @@ class Fraction:
 
     def add_with_int(self, other: int):
         """ Addition with int """
+        if not isinstance(other, int):
+            raise TypeError("Cannot operate with a non integer")
+
+        # Add the numerator by the given times the denominator
         copy = Fraction(self.num, self.denom)
         copy.num += other * self.denom
         return Fraction(copy.num, copy.denom)
 
     def __sub__(self, other):
         """ Subtraction of fraction """
-        if type(other) == int:
+
+        # Determine what type is given
+        if isinstance(other, int):
             return self.sub_with_int(other)
-        if type(other) == float:
+        if isinstance(other, float):
             return self.sub_with_float(other)
-        if type(other) == Fraction:
+        if isinstance(other, Fraction):
             return self.sub_with_fraction(other)
         raise TypeError("Cannot operate with that type")
 
     def sub_with_fraction(self, other):
         """ Subtraction with fraction """
-        if type(other) != Fraction:
+        if not isinstance(other, Fraction):
             raise TypeError("Cannot operate with a non fraction")
+
+        # get common factor of both denominator, create a new one using that
         comfac = common_factor(self.denom, other.denom)
         new_denom = comfac * (self.denom / comfac) * (other.denom / comfac)
+
+        # Create a new result fraction object, then change the denominator
         copy = Fraction(1, 2)
         copy.denom = new_denom
+
+        # Change the numerator to the it times what denom is multiplied by
         copy.num = self.num * (other.denom / comfac) - other.num * (self.denom / comfac)
         return Fraction(copy.num, copy.denom)
 
@@ -99,6 +134,10 @@ class Fraction:
 
     def sub_with_int(self, other: int):
         """ Subtraction with int """
+        if not isinstance(other, int):
+            raise TypeError("Cannot operate with a non integer")
+
+        # Subtract the numerator by the given times the denominator
         copy = Fraction(self.num, self.denom)
         copy.num -= other * self.denom
         return Fraction(copy.num, copy.denom)
@@ -106,12 +145,18 @@ class Fraction:
     def __mul__(self, other):
         """ Multiply of fraction """
         copy = Fraction(self.num, self.denom)
-        if type(other) == int:
+
+        # If it's an int just multiply the numerator
+        if isinstance(other, int):
             copy.num *= other
             return copy
-        if type(other) == float:
+
+        # If it's a float, convert to fraction, then re do multiplcation
+        if isinstance(other, float):
             return self.__mul__(Fraction(other))
-        if type(other) == Fraction:
+
+        # if it's a fraction, times the numerator and denominator
+        if isinstance(other, Fraction):
             copy.num *= other.num
             copy.denom *= other.denom
             return Fraction(copy.num, copy.denom)
@@ -119,11 +164,17 @@ class Fraction:
 
     def __truediv__(self, other):
         """ Normal division of fraction """
-        if type(other) == int:
+
+        # If it's an int just multiply the denominator
+        if isinstance(other, int):
             return Fraction(self.num, self.denom * other)
-        if type(other) == float:
+        
+        # If it's a float, convert to fraction, then re do division
+        if isinstance(other, float):
             return self.__truediv__(Fraction(other))
-        if type(other) == Fraction:
+
+        # if it's a fraction times the numerator and denominator, but inverted
+        if isinstance(other, Fraction):
             return self.__mul__(Fraction(other.denom, other.num))
         return TypeError("Cannot operate with a non fraction")
 
@@ -157,14 +208,14 @@ def factorial(value):
     return value * factorial(value - 1)
 
 
-def permute(n: int, p: int) -> float:
+def permute(num: int, p_num: int) -> float:
     """ Get permutation of n to p """
-    return factorial(n) / factorial(n - p)
+    return factorial(num) / factorial(num - p_num)
 
 
-def combine(n: int, p: int) -> float:
+def combine(num: int, p_num: int) -> float:
     """ Return combination of n to p """
-    return factorial(n) / (factorial(n - p) * factorial(p))
+    return factorial(num) / (factorial(num - p_num) * factorial(p_num))
 
 
 if __name__ == '__main__':
